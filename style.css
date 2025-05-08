@@ -60,9 +60,36 @@ body.male-theme {
   --btn-hover-bg: #0056b3;
 }
 
+/* Female themes */
 body.female-theme {
   --btn-bg: #e83e8c;
   --btn-hover-bg: #b02a6f;
+}
+
+body.cutie-theme {
+  --bg-color: #ffe6f0;
+  --container-bg: #fff0f6;
+  --text-color: #d6336c;
+  --btn-bg: #ff6f91;
+  --btn-hover-bg: #d6336c;
+  --input-bg: #ffe6f0;
+  --input-border: #ff6f91;
+  --highlight-bg: #ffd6e8;
+  --correct-color: #ff85a2;
+  --incorrect-color: #ff4d6d;
+}
+
+body.kawaii-theme {
+  --bg-color: #fff0f5;
+  --container-bg: #ffe4f1;
+  --text-color: #c71585;
+  --btn-bg: #ff69b4;
+  --btn-hover-bg: #c71585;
+  --input-bg: #fff0f5;
+  --input-border: #ff69b4;
+  --highlight-bg: #ffb6c1;
+  --correct-color: #ff82ab;
+  --incorrect-color: #ff1493;
 }
 
 /* Sections */
