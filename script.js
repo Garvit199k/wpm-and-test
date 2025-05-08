@@ -44,9 +44,6 @@
   const testBackBtn = document.getElementById('test-back-btn');
   const leaderboardBackBtn = document.getElementById('leaderboard-back-btn');
 
-  const showLoginBtn = document.getElementById('show-login-btn');
-  const showRegisterBtn = document.getElementById('show-register-btn');
-
   // Utility Functions
   function showSection(section) {
     Object.values(sections).forEach(s => s.classList.remove('active'));
@@ -125,23 +122,6 @@
     submitScoreBtn.disabled = false;
   }
 
-  // Toggle login/register forms
-  showLoginBtn.addEventListener('click', () => {
-    showLoginBtn.classList.add('active');
-    showRegisterBtn.classList.remove('active');
-    loginForm.classList.add('active');
-    registerForm.classList.remove('active');
-    authMessage.textContent = '';
-  });
-
-  showRegisterBtn.addEventListener('click', () => {
-    showRegisterBtn.classList.add('active');
-    showLoginBtn.classList.remove('active');
-    registerForm.classList.add('active');
-    loginForm.classList.remove('active');
-    authMessage.textContent = '';
-  });
-
   // Event Handlers
   loginForm.addEventListener('submit', async e => {
     e.preventDefault();
@@ -156,7 +136,7 @@
       const res = await fetch('/api/login.js', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email: username, password}), // backend expects email field, so send username as email
+        body: JSON.stringify({username, password}),
       });
       const data = await res.json();
       if (res.ok) {
@@ -173,24 +153,22 @@
   registerForm.addEventListener('submit', async e => {
     e.preventDefault();
     authMessage.textContent = '';
-    const name = document.getElementById('register-name').value.trim();
     const username = document.getElementById('register-username').value.trim();
     const password = document.getElementById('register-password').value.trim();
-    if (!name || !username || !password) {
-      authMessage.textContent = 'Please enter name, username and password.';
+    if (!username || !password) {
+      authMessage.textContent = 'Please enter username and password.';
       return;
     }
     try {
       const res = await fetch('/api/register.js', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email: username, password}), // backend expects email field, so send username as email
+        body: JSON.stringify({username, password}),
       });
       const data = await res.json();
       if (res.ok) {
         authMessage.textContent = 'Registration successful. Please login.';
         registerForm.reset();
-        showLoginBtn.click();
       } else {
         authMessage.textContent = data.error || 'Registration failed.';
       }
@@ -245,7 +223,7 @@
     if (!currentUser) return;
     const wpm = calculateWPM();
     const scoreData = {
-      username: currentUser.email,
+      username: currentUser.username,
       mode: selectedMode,
       wpm,
       date: new Date().toISOString(),
@@ -307,25 +285,18 @@
 
   themeToggleBtn.addEventListener('click', () => {
     const body = document.body;
-    if (body.classList.contains('cutie-theme')) {
-      body.classList.remove('cutie-theme');
-      body.classList.add('kawaii-theme');
-    } else if (body.classList.contains('kawaii-theme')) {
-      body.classList.remove('kawaii-theme');
-      body.classList.add('male-theme');
+    if (body.classList.contains('dark-theme')) {
+      body.classList.remove('dark-theme');
+      body.classList.toggle('male-theme');
+      body.classList.remove('female-theme');
     } else if (body.classList.contains('male-theme')) {
       body.classList.remove('male-theme');
-      body.classList.add('dark-theme');
-    } else if (body.classList.contains('dark-theme')) {
-      body.classList.remove('dark-theme');
       body.classList.add('female-theme');
     } else if (body.classList.contains('female-theme')) {
       body.classList.remove('female-theme');
-      body.classList.add('light-theme');
-    } else if (body.classList.contains('light-theme')) {
-      body.classList.remove('light-theme');
+      body.classList.add('dark-theme');
     } else {
-      body.classList.add('cutie-theme');
+      body.classList.add('dark-theme');
     }
   });
 
