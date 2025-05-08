@@ -1,21 +1,37 @@
-let leaderboard = [];
+import fs from 'fs';
+import path from 'path';
+
+const leaderboardFilePath = path.resolve('./api/leaderboard.json');
+
+function readLeaderboard() {
+  try {
+    const data = fs.readFileSync(leaderboardFilePath, 'utf-8');
+    return JSON.parse(data);
+  } catch (err) {
+    return [];
+  }
+}
+
+function writeLeaderboard(entries) {
+  fs.writeFileSync(leaderboardFilePath, JSON.stringify(entries, null, 2));
+}
 
 export default function handler(req, res) {
-  if (req.method === 'POST') {
+  if (req.method === 'GET') {
+    const entries = readLeaderboard();
+    // Return top 10 sorted by WPM descending
+    const top10 = entries.sort((a, b) => b.wpm - a.wpm).slice(0, 10);
+    res.status(200).json(top10);
+  } else if (req.method === 'POST') {
     const { username, mode, wpm, date } = req.body;
     if (!username || !mode || !wpm || !date) {
-      res.status(400).json({ error: 'Missing score data' });
+      res.status(400).json({ error: 'Missing fields' });
       return;
     }
-    leaderboard.push({ username, mode, wpm, date });
-    // Keep leaderboard sorted by wpm descending and limit to top 10
-    leaderboard.sort((a, b) => b.wpm - a.wpm);
-    if (leaderboard.length > 10) {
-      leaderboard = leaderboard.slice(0, 10);
-    }
-    res.status(201).json({ message: 'Score added' });
-  } else if (req.method === 'GET') {
-    res.status(200).json(leaderboard);
+    const entries = readLeaderboard();
+    entries.push({ username, mode, wpm, date });
+    writeLeaderboard(entries);
+    res.status(201).json({ message: 'Score submitted' });
   } else {
     res.status(405).json({ error: 'Method not allowed' });
   }
